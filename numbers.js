@@ -39,7 +39,7 @@ exports.tripletName = function (n){
 	return out.trim();
 }
 
-exports.toWords= function (n){
+exports.numberName= function (n){
 	var suffix = "Thousand Million Billion Trillion Quadrillion Quintillion Sextillion Septillion Octillion Nonillion Decillion Undecillion Duodecillion Tredecillion Quattuordecillion Quindecillion Sexdecillion Septendecillion Octodecillion Novemdecillion Vigintillion Unvigintillion Duovigintillion Trevigintillion Quattuorvigintillion Quinvigintillion Sexvigintillion Septenvigintillion Octovigintillion Novemvigintillion Trigintillion Untrigintillion Duotrigintillion".split(" ");
 	var name = "";
 	n=n.toString();
