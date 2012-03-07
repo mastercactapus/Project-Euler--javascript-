@@ -24,7 +24,7 @@ exports.getDigitS = function(n,digit){ //todo
 
 }
 exports.tripletName = function (n){
-	var words = "Zero One Two Three Four Five Six Seven Eight Nine Ten Eleven Twelve Thirteen Fourteen Fifteen Sixteen Seventeen Eighteen Nineteen Twenty Thirty Fourty Fifty Sixty Seventy Eighty Ninety Hundred".split(" ");
+	var words = "Zero One Two Three Four Five Six Seven Eight Nine Ten Eleven Twelve Thirteen Fourteen Fifteen Sixteen Seventeen Eighteen Nineteen Twenty Thirty Forty Fifty Sixty Seventy Eighty Ninety Hundred".split(" ");
 	n = parseInt(n);
 	var h=exports.getDigit(n,3),
 		t=exports.getDigit(n,2),
