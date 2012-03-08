@@ -17,22 +17,18 @@ var data = [
 ];
 
 var max=0;
-for (var i=0;i<100;i++){
+for (var i=0;i<1000;i++){
 	var sum=0;
-	
+	var lastIndex=0;
 	for (var step in data){
-		var options = data[step];
-		var optionSums = [];
-		for (var j in options){
-			optionSums.push(j>0 ? optionSums[j-1] + options[j] : options[j]);
+		if (step==0) {sum=75;lastIndex=0;}
+		else{
+			var options = data[step];
+			var total = options[lastIndex] + options[lastIndex+1];
+			var choice = Math.random() * total;
+			lastIndex = (choice <= options[lastIndex] ? lastIndex : lastIndex+1);
+			sum += options[lastIndex];
 		}
-		var choice = Math.random()*optionSums[options.length-1];
-		var chosenOne=-1;
-		for (var j in options){
-			if (choice < optionSums[j]) chosenOne=j;
-		}
-		
-		sum += options[chosenOne];
 	}
 	
 	max=Math.max(max,sum);
