@@ -18,6 +18,28 @@ exports.isAmicable = function(n){
 }
 
 
+exports.lexiPermutation = function(str){
+	str=str.split("");
+	var swap = function(x,y){
+		var t = str[x];
+		str[x]=str[y];
+		str[y]=t;
+	}
+	var k=-1;
+	for (var i =0;i<str.length-1;i++)
+		if (str[i] < str[i+1])k=i;
+	var l=-1;
+	for (var i=0;i<str.length;i++)
+		if (str[k] < str[i]) l=i;
+	swap(k,l);
+	while (k<l){
+		swap(k,l);
+		k++;
+		l--;
+	}
+	return str.join("");
+}
+
 //gets the nth digit of a number, starting at decimal (<=0 for decimal)
 exports.getDigit = function(n,digit){
 	return (Math.floor(n/(Math.pow(10,digit-1))))%10
