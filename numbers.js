@@ -57,8 +57,14 @@ exports.countFactors = function(n){
 }
 
 exports.getFactors = function (n){
-	if (n == 0) return [0];
-	if (n == 1) return [1];
+	if (n <= 3){
+		switch(n){
+			case 0:
+			return [0];
+			default:
+			return [1];
+		}
+	}
 	var factors=[1];
 	var limit = Math.floor(Math.sqrt(n));
 	for (var i=2;i<limit;i++){
@@ -68,6 +74,10 @@ exports.getFactors = function (n){
 		};
 	}
 	if (n/limit == limit) factors.push(limit);
+	else if (n % limit == 0){
+		factors.push(limit);
+		factors.push(n/limit);
+	}
 	return factors;
 }
 
