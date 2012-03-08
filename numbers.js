@@ -1,11 +1,19 @@
+exports.isPerfect = function(n){
+	return (exports.sumOfFactors(n) == n);
+}
+exports.isAbundant = function(n){
+	return (exports.sumOfFactors(n) > n);
+}
+exports.isDeficient = function(n){
+	return (exports.sumOfFactors(n) < n);
+}
+exports.sumOfFactors = function(n){
+	return exports.arraySum(exports.getFactors(n));
+}
 exports.isAmicable = function(n){
-	var factors = exports.getFactors(n);
-	factors.splice(1,1);
-	var partner = exports.arraySum(factors);
+	var partner = exports.sumOfFactors(n);
 	if (partner == n) return false;
-	factors = exports.getFactors(partner);
-	factors.splice(1,1);
-	if (exports.arraySum(factors) == n) return true
+	if (exports.sumOfFactors(partner) == n) return true
 	else return false;
 }
 
@@ -47,10 +55,13 @@ exports.countFactors = function(n){
 	if (n/limit == limit) factors++;
 	return factors;
 }
+
 exports.getFactors = function (n){
-	var factors=[];
+	if (n == 0) return [0];
+	if (n == 1) return [1];
+	var factors=[1];
 	var limit = Math.floor(Math.sqrt(n));
-	for (var i=1;i<limit;i++){
+	for (var i=2;i<limit;i++){
 		if (n % i == 0) {
 		factors.push(i);
 		factors.push(n/i);
