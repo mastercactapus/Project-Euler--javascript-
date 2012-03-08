@@ -1,6 +1,24 @@
+exports.isAmicable = function(n){
+	var factors = exports.getFactors(n);
+	factors.splice(1,1);
+	var partner = exports.arraySum(factors);
+	factors = exports.getFactors(partner);
+	factors.splice(1,1);
+	if (exports.arraySum(factors) == n) return true
+	else return false;
+}
+
+
 //gets the nth digit of a number, starting at decimal (<=0 for decimal)
 exports.getDigit = function(n,digit){
 	return (Math.floor(n/(Math.pow(10,digit-1))))%10
+}
+
+exports.arraySum = function(nArray){
+	var sum=0;
+	for (var i in nArray)
+		sum += nArray[i];
+	return sum;
 }
 
 //tests if a number is a palindrome -- assumes integer
@@ -30,7 +48,7 @@ exports.countFactors = function(n){
 }
 exports.getFactors = function (n){
 	var factors=[];
-	var limit = Math.sqrt(n);
+	var limit = Math.floor(Math.sqrt(n));
 	for (var i=1;i<limit;i++){
 		if (n % i == 0) {
 		factors.push(i);
