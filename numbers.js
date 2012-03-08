@@ -2,6 +2,7 @@ exports.isAmicable = function(n){
 	var factors = exports.getFactors(n);
 	factors.splice(1,1);
 	var partner = exports.arraySum(factors);
+	if (partner == n) return false;
 	factors = exports.getFactors(partner);
 	factors.splice(1,1);
 	if (exports.arraySum(factors) == n) return true
