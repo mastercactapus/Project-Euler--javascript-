@@ -20,18 +20,33 @@ exports.isAmicable = function(n){
 
 exports.lexiPermutation = function(str){
 	str=str.split("");
+	
+	//swap two indexes
 	var swap = function(x,y){
 		var t = str[x];
 		str[x]=str[y];
 		str[y]=t;
 	}
+	
 	var k=-1;
+	//this will find the least significant pair of numbers where
+	//the least significant digit is greater (213 = 1 and 3)
 	for (var i =0;i<str.length-1;i++)
 		if (str[i] < str[i+1])k=i;
+		
+	if (k==-1) return str; //there are no more permutations
+	
+	//this will find the least significant number that is greater
+	//than the above number (usually k+1)
 	var l=-1;
 	for (var i=0;i<str.length;i++)
 		if (str[k] < str[i]) l=i;
+		
+	//swap the two
 	swap(k,l);
+	
+	//reverse the sequence for other indexes
+	k++;
 	while (k<l){
 		swap(k,l);
 		k++;
