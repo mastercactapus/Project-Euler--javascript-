@@ -1,3 +1,15 @@
+var digitStack=[];
+
+
+exports.countDigits = function(n){
+	if (digitStack.length==0)
+		for (var i=1;i<=20;i++)digitStack[i-1]=Math.pow(10,i);
+	var len=1;
+	for (var i=19;i>=0;i--)
+		if (n>digitStack[i]) return i+2;
+	return 1;
+}
+
 exports.isPerfect = function(n){
 	return (exports.sumOfFactors(n) == n);
 }
