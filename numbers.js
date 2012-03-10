@@ -19,8 +19,6 @@ exports.isAmicable = function(n){
 
 
 exports.lexiPermutation = function(str){
-	str=str.split("");
-	
 	//swap two indexes
 	var swap = function(x,y){
 		var t = str[x];
@@ -45,14 +43,11 @@ exports.lexiPermutation = function(str){
 	//swap the two
 	swap(k,l);
 	
-	//reverse the sequence for other indexes
-	k++;
-	while (k<l){
-		swap(k,l);
-		k++;
-		l--;
-	}
-	return str.join("");
+	//reverse the sequence for k+1 to the end of the array
+	// as k+1 is the most significant change, the others are 
+	//already in greatest to least order.
+  
+	return str.slice(0, k + 1).concat(str.slice(k + 1).reverse());
 }
 
 //gets the nth digit of a number, starting at decimal (<=0 for decimal)
