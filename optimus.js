@@ -20,6 +20,8 @@ var nextPrime = function(){
 
 //tests if a number is prime
 exports.isPrime = function(n){
+	if (n < exports.primes[exports.primes.length-1])
+		return (exports.primes.indexOf(n) > -1);
 	var limit = Math.sqrt(n);
 	if (limit == Math.floor(limit)) return false;
 	var cTest = 1;
