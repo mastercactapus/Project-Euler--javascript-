@@ -17,6 +17,27 @@ exports.isAmicable = function(n){
 	else return false;
 }
 
+exports.getDecimal = function(n,d){
+	var out = [];
+	var carry = [];
+	var pattern_start=-1;
+	out.push(Math.floor(n/d));
+	if (n % d == 0) return out[0];
+	carry.push(-1);
+	carry.push(n % d*10);
+	while (carry[carry.length-1] >0){
+		out.push(Math.floor(carry[carry.length-1] / d));
+		var c = carry[carry.length-1] % d;
+		if (c == 0) break;
+		pattern_start = carry.indexOf(c*10);
+		if (pattern_start > -1)break;
+		carry.push(c*10);
+	}
+	if (pattern_start > -1) 
+		return out[0] + '.' + out.slice(1,pattern_start).join("") + "(" + out.slice(pattern_start).join("") + ")";
+	else
+		return out[0] + "." + out.slice(1).join("");
+}
 
 exports.lexiPermutation = function(str){
 	//swap two indexes
