@@ -1,3 +1,5 @@
+var start = new Date().getTime();
+
 var a = 1;
 var b = 2;
 var c = 3;
@@ -9,3 +11,6 @@ a=b;
 b=c;
 }
 console.log(sum);
+
+var end = new Date().getTime();
+console.log(end-start + " milliseconds.");
