@@ -1,4 +1,4 @@
-var start = new Date().getTime();
+var out =require("./timer");
 
 var a = 1;
 var b = 2;
@@ -10,7 +10,4 @@ if (c%2 == 0) sum+=c;
 a=b;
 b=c;
 }
-console.log(sum);
-
-var end = new Date().getTime();
-console.log(end-start + " milliseconds.");
+out.print(sum);
