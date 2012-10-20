@@ -8,7 +8,7 @@ exports.primes =[2, 3, 5, 7, 11, 13, 17, 19, 23, 29,
 exports.getPrime = function(n){
 	while (exports.primes.length < n) nextPrime();
 	return exports.primes[n-1];
-}
+};
 
 //gets the next prime number (that hasn't been found)
 var nextPrime = function(){
@@ -16,7 +16,7 @@ var nextPrime = function(){
 	while (!exports.isPrime(cTest)) cTest +=2;
 	exports.primes.push(cTest);
 	return cTest;
-}
+};
 
 //tests if a number is prime
 exports.isPrime = function(n){
@@ -26,8 +26,8 @@ exports.isPrime = function(n){
 	if (limit == Math.floor(limit)) return false;
 	var cTest = 1;
 	while (exports.getPrime(cTest) <= limit){
-		if (n % exports.getPrime(cTest) == 0) return false;
+		if (n % exports.getPrime(cTest) === 0) return false;
 		cTest++;
 	}
 	return true;
-}
+};
