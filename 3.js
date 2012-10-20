@@ -1,4 +1,5 @@
 var optimus = require("./optimus");
+var out = require("./timer");
 
 var num=600851475143;
 
@@ -15,4 +16,4 @@ while (optimus.getPrime(i) <= limit) {
 	i++;
 }
 
-console.log(hFactor);
+out.print(hFactor);
