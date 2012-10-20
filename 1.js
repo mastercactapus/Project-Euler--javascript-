@@ -1,4 +1,4 @@
-var start = new Date().getTime();
+var out = require("./timer");
 
 var sum =0;
 for (var i=1;i<1000;i++){
@@ -6,7 +6,4 @@ for (var i=1;i<1000;i++){
 		sum += i;
 	}
 }
-console.log(sum);
-
-var end = new Date().getTime();
-console.log(end-start + " milliseconds.");
+out.print(sum);
