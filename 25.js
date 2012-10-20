@@ -1,3 +1,4 @@
+var out = require("./timer");
 var bigint = require("bigint");
 var term=3;
 var f1=bigint(1);
@@ -11,4 +12,4 @@ while (max.gt(fn)){
 	fn=f1.add(f2);
 	term++;
 }
-console.log(term);
+out.print(term);

@@ -1,3 +1,4 @@
+var out = require("./timer");
 var numbers = require("./numbers");
 var max=0;
 var size=0;
@@ -8,4 +9,4 @@ for (var i=1;i<1000;i++){
 		max=i;
 	}
 }
-console.log(max);
+out.print(max);

@@ -1,3 +1,4 @@
+var out = require("./timer");
 var sum=1;
 
 var layer=0;
@@ -18,4 +19,4 @@ for (var i=1;i<=500;i++){
 		sum+=num;
 
 }
-console.log(sum);
+out.print(sum);

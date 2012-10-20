@@ -1,3 +1,4 @@
+var out = require("./timer");
 var optimus= require("./optimus");
 var max=0;
 var max_prod=0;
@@ -16,4 +17,4 @@ for (var a=-999;a<1000;a++){
 	}
 }
 
-console.log(max_prod);
+out.print(max_prod);

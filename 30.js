@@ -1,3 +1,4 @@
+var out = require("./timer");
 var numbers = require("./numbers");
 var sum=0;
 var sumPower = function(n,p){
@@ -17,4 +18,4 @@ sum+=t;
 t++;
 }
 
-console.log(sum);
+out.print(sum);

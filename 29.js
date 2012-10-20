@@ -1,3 +1,4 @@
+var out = require("./timer");
 var bigint = require("bigint");
 var data=new Array();
 
@@ -9,4 +10,4 @@ data.push(res.toString());
  }
 }
 
-console.log(data.length);
+out.print(data.length);
