@@ -1,3 +1,4 @@
+var out = require("./timer");
 var numbers = require("./numbers");
 var abundant=[];
 
@@ -22,4 +23,4 @@ var sum=0;
 for (var i=1;i<=28123;i++){ //load all relevant abundant numbers
 	if (!testSum(i)) sum+=i;
 }
-console.log(sum);
+out.print(sum);

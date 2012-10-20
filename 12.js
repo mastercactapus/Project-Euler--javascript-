@@ -1,3 +1,4 @@
+var out = require("./timer");
 var numbers = require("./numbers")
 var tri = 1;
 var inc = 1;
@@ -8,4 +9,4 @@ while (div <= 500){
 	tri += inc;
 	div = numbers.countFactors(tri);
 }
-console.log(tri);
+out.print(tri);

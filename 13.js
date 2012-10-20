@@ -1,3 +1,5 @@
+var out = require("./timer");
+
 var data = [
 	"37107287533902102798797998220837590246510135740250",
 	"46376937677490009712648124896970078050417018260538",
@@ -109,4 +111,4 @@ for (i in data){
 	sum = numbers.stringSum(sum,data[i]);
 }
 
-console.log(sum.substr(0,10));
+out.print(sum.substr(0,10));

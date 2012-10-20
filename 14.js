@@ -1,3 +1,5 @@
+var out = require("./timer");
+
 var num=1;
 var chain=1;
 
@@ -15,4 +17,4 @@ for (var i=2;i<1000000;i++){
 	}
 }
 
-console.log(num);
+out.print(num);

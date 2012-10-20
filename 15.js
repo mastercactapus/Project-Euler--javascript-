@@ -1,3 +1,4 @@
+var out = require("./timer");
 function firstSix(){
 	for (var blk=1;blk<=6;blk++){
 var tests = {};
@@ -39,4 +40,4 @@ function binom(n){
 	return Math.floor(numbers.factorial(2*n) / (Math.pow(numbers.factorial(n),2)));
 }
 
-console.log(binom(20));
+out.print(binom(20));

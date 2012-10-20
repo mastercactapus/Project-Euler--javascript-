@@ -1,5 +1,5 @@
+var out = require("./timer");
 var numbers = require("./numbers");
-
 var highest=0;
 
 for (var x=100;x<=999;x++)
@@ -9,4 +9,4 @@ for (var x=100;x<=999;x++)
 			if (numbers.isPalindrome(prod)) highest = prod;
 	}
 
-console.log(highest);
+out.print(highest);

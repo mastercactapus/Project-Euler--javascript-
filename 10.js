@@ -1,3 +1,4 @@
+var out = require("./timer");
 var optimus = require("./optimus");
 
 var sum=0;
@@ -8,4 +9,4 @@ while (optimus.getPrime(c)<2000000){
 	c++;
 }
 
-console.log(sum);
+out.print(sum);

@@ -1,3 +1,5 @@
+var out = require("./timer");
+
 var data = [
 	[75],
 	[95,64],
@@ -34,4 +36,4 @@ for (var i=0;i<1000;i++){
 	max=Math.max(max,sum);
 }
 
-console.log(max);
+out.print(max);

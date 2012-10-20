@@ -1,3 +1,5 @@
+var out = require("./timer");
+
 var data = [
 	"73167176531330624919225119674426574742355349194934",
 	"96983520312774506326239578318016984801869478851843",
@@ -37,4 +39,4 @@ for (var i=0;i<data.length-5;i++){
 	max = Math.max(max,prodByIndex(data,i,5));
 }
 
-console.log(max);
+out.print(max);
