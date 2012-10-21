@@ -1,5 +1,18 @@
 var digitStack=[];
 
+exports.simplify = function(fraction) {
+	var factA = exports.getFactors(fraction[0]);
+	var factB = exports.getFactors(fraction[1]);
+	factA.push(fraction[0]);
+	factB.push(fraction[1]);
+	var res=1;
+	for (var i in factA) {
+		if (factB.indexOf(factA[i])) res=factA[i];
+	}
+	fraction[0] /= res;
+	fraction[1] /= res;
+	return fraction;
+};
 
 exports.countDigits = function(n){
 	if (digitStack.length===0)
@@ -162,7 +175,7 @@ exports.stringSum = function(num1,num2){
 	}
 	while (sum[sum.length-1] === 0)sum.pop();
 	return sum.reverse().join("");
-}
+};
 
 exports.getDigit = function(n,digit){
 	n=parseInt(n);
