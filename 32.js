@@ -1,0 +1,2 @@
+var out=require("./timer");
+
