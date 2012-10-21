@@ -1,6 +1,7 @@
 var out = require("./timer");
 var numbers = require("./numbers");
 var abundant=[];
+var max = 28123;
 
 /*
  * 
@@ -8,19 +9,21 @@ var abundant=[];
  * the found abundant numbers
  */
 
-for (var i=1;i<=28123;i++){ //load all relevant abundant numbers
-	if (numbers.isAbundant(i)) abundant.push(i);
+for (var i=1;i<=max;i++){ //load all relevant abundant numbers
+	abundant[i] = numbers.isAbundant(i);
 }
+
 function testSum(n){
 	var limit = Math.floor(n/2);
-	for (var i=0;i<abundant.length;i++){
-		if (abundant[i]>limit)return false;
-		if (abundant.indexOf(n-abundant[i]) >-1) return true;
+	for (var i in abundant) {
+		if (i > limit) return false;
+		if (abundant[i] && abundant[n-i]) return true;
 	}
 	return false;
 }
-var sum=0;
-for (var i=1;i<=28123;i++){ //load all relevant abundant numbers
-	if (!testSum(i)) sum+=i;
+var sum=max * (max + 1) / 2; //sum of all integers
+
+for (var i in abundant){ //load all relevant abundant numbers
+	if (testSum(i)) sum -= i;
 }
 out.print(sum);
