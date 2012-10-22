@@ -71,28 +71,28 @@ exports.lexiPermutation = function(str){
 		str[x]=str[y];
 		str[y]=t;
 	};
-	
+
 	var k=-1;
 	//this will find the least significant pair of numbers where
 	//the least significant digit is greater (213 = 1 and 3)
 	for (var i =0;i<str.length-1;i++)
 		if (str[i] < str[i+1])k=i;
-		
+
 	if (k==-1) return str; //there are no more permutations
-	
+
 	//this will find the least significant number that is greater
 	//than the above number (usually k+1)
 	var l=-1;
 	for (var i=0;i<str.length;i++)
 		if (str[k] < str[i]) l=i;
-		
+
 	//swap the two
 	swap(k,l);
-	
+
 	//reverse the sequence for k+1 to the end of the array
 	// as k+1 is the most significant change, the others are
 	//already in greatest to least order.
-  
+
 	return str.slice(0, k + 1).concat(str.slice(k + 1).reverse());
 };
 
@@ -183,8 +183,10 @@ exports.getDigit = function(n,digit){
 };
 exports.getDigitS = function(n,digit){ //todo
 	n=n.toString();
-
 };
+exports.getDigitArray = function(n){
+    return Math.abs(Math.floor(n)).toString().split("");
+}
 exports.tripletName = function (n){
 	var words = "Zero One Two Three Four Five Six Seven Eight Nine Ten Eleven Twelve Thirteen Fourteen Fifteen Sixteen Seventeen Eighteen Nineteen Twenty Thirty Forty Fifty Sixty Seventy Eighty Ninety Hundred".split(" ");
 	n = parseInt(n);
@@ -194,7 +196,7 @@ exports.tripletName = function (n){
 	if (t+h+o === 0) return words[0];
 	var out="";
 	if (h>0) {out += words[h] + " hundred" + ((t+o > 0) ? ' and':'');}
-	
+
 	if (t>1) {out += " " + words[t + 18] + ((o>0) ? '-' + words[o] : '');}
 	else if (t == 1) {out += " " + words[o+10];}
 	else if (o>0){out += " " + words[o];}
@@ -212,7 +214,7 @@ exports.numberName= function (n){
 	var number = n.substring(n.indexOf('-')+1,(decI > -1 ? decI - 1 : n.length));
 
 	var triplets = Math.ceil(number.length / 3);
-	
+
 	var offset = 3-number.length % 3; //final triplet offset
 	if (offset == 3) offset=0;
 	var out = [];
