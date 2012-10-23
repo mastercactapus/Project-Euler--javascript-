@@ -124,6 +124,14 @@ exports.isPythTriplet = function(a,b,c){
 	if (Math.pow(a,2) + Math.pow(b,2) == Math.pow(c,2)) return true;
 	else return false;
 };
+exports.isPandigital = function(n){
+  var num = n.toString();
+  if (num.length != 9) return false;
+  for (var i=1;i<10;i++)
+    if (num.indexOf(i) == -1) return false;
+
+    return true;
+};
 
 exports.countFactors = function(n){
 	var factors=0;
