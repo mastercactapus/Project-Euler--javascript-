@@ -63,7 +63,12 @@ exports.getDecimal = function(n,d){
 	else
 		return out[0] + "." + out.slice(1).join("");
 };
-
+exports.firstPermutation = function(str) {
+   return str.sort();
+};
+exports.lastPermutation = function(str){
+    return str.sort().reverse();
+};
 exports.lexiPermutation = function(str){
 	//swap two indexes
 	var swap = function(x,y){
@@ -110,12 +115,8 @@ exports.arraySum = function(nArray){
 
 //tests if a number is a palindrome -- assumes integer
 exports.isPalindrome = function(n){
-	var str = n.toString();
-	var len = Math.floor(str.length/2);
-	for (var i=0;i<len;i++){
-		if (str[i] != str[str.length-i-1]) return false;
-	}
-	return true;
+    var str = n.toString();
+    return str ==  str.split("").reverse().join("");
 };
 
 exports.isPythTriplet = function(a,b,c){
@@ -242,3 +243,5 @@ exports.factorial = function(n){
 	}
 	return prod;
 };
+
+
