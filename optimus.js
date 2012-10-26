@@ -6,24 +6,27 @@ exports.primes =[2, 3, 5, 7, 11, 13, 17, 19, 23, 29,
 
 //gets the nth prime number, finding new ones as nessisary
 exports.getPrime = function(n){
-	while (exports.primes.length < n) nextPrime();
+	while (exports.primes.length < n) newPrime();
 	return exports.primes[n-1];
 };
 
 //gets the next prime number (that hasn't been found)
-var nextPrime = function(){
+var newPrime = function(){
 	var cTest = exports.primes[exports.primes.length-1] + 2;
 	while (!exports.isPrime(cTest)) cTest +=2;
 	exports.primes.push(cTest);
 	return cTest;
 };
 
+
+
 //tests if a number is prime
 exports.isPrime = function(n){
 	if (n < exports.primes[exports.primes.length-1])
 		return (exports.primes.indexOf(n) > -1);
-	var limit = Math.sqrt(n);
-	if (limit == Math.floor(limit)) return false;
+	var limit_f = Math.sqrt(n);
+    var limit = Math.floor(limit_f);
+	if (limit_f == Math.floor(limit)) return false;
 	var cTest = 1;
 	while (exports.getPrime(cTest) <= limit){
 		if (n % exports.getPrime(cTest) === 0) return false;
