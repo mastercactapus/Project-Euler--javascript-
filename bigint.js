@@ -1,13 +1,70 @@
-exports.max = function(num1,num2) {
-    return (num1.gt(num2)) ? num1 : num2;
+var BASE = 10; //base used in memory
+
+function add(num1,num2) {
+    var res = [];
+    var len = Math.max(num1.length,num2.length)+2;
+    num1=pad(num1,len);
+    num2=pad(num2,len);
+    res=pad(res,len);
+    var carry=0;
+    for (var i = 0;i<len;i++) {
+        var val = num1[i] + num2[i] + carry;
+        res[i] = (val % BASE);
+        carry = val / BASE >> 0;
+    }
+    return res;
 }
-exports.min = function(num1,num2) {
-    return (num1.lt(num2)) ? num1 : num2;
+function prod(num1,num2) {
+    var res=[];
+    var len = num1.length + num2.length +2;
+    num1=pad(num1,len);
+    num2=pad(num2,len);
+    res=pad(res,len);
+    var carry=0;
+    for (var i = 0;i<len;i++){
+        for (var j=0;j<len;j++){
+            var val = (num2[j] * num1[i]) + carry + res[i+j];
+            res[i+j] = (val % BASE);
+            carry = val / BASE >> 0;
+        }
+    }
+}
+function pad(num,len) {
+    if (num.length>=len) return num;
+    var padding = num[num.length-1]; //sign bit/chunk
+    while (num.length<len) num.push(padding);
+    return num;
+}
+function incr(num) {
+    num[0]++;
+    if (num[num.length-1] == BASE-1)num.push(0);
+    var i=0;
+    while (num[i] == BASE) {
+        num[i]=0;
+        num[i+1]++;
+        i++;
+    }
+}
+function compliment(num) {
+    var r = BASE-1;
+    for (var i=0;i<num.length;i++){
+        num[i] = r-num[i];
+    }
+    return incr(num);
+}
+function dif(num1,num2) {
+    var res = [];
+    var len = Math.max(num1.length,num2.length);
+    num1.length=len;
+    num2.length=len;
+    res.length=len;
+    return add(num1,compliment(num2)).pop();
 }
 
-var bigInt = function(number,isPositive) {
+
+var bigInt = function(set_data,set_base) {
     var
-        base = 10,
+        base=10,
         digits=[],
         positive=true,
         self=this;
@@ -52,7 +109,7 @@ var bigInt = function(number,isPositive) {
         return new bigInt(digits, positive);
     }
     function add(num){
-        var res= new bigInt(0);
+        var tmp =[];
         var len = Math.max(digits.length,num.digits.length)+1;
 
         for (var i=0;i<len-1;i++) {
@@ -63,8 +120,6 @@ var bigInt = function(number,isPositive) {
         return res;
     }
     function sub(num) {
-        console.log(toString());
-        console.log(num.toString());
         var res = new bigInt(0);
         if (eq(num)) return res;
         var len = Math.max(digits.length,num.digits.length);
@@ -79,8 +134,9 @@ var bigInt = function(number,isPositive) {
             bot=digit;
         }
 
-        for (var i in res.digits){
-            res.digits[i] = top(i) - bot(i);
+        for (var i=0; i<len; i++){
+            res.digits[i] = top(i+1) - bot(i+1);
+            console.log()
             if (res.digits[i]<0) {
                 res.digits[i]+=10;
                 res.digits[i+1]--;
