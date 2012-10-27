@@ -32,6 +32,12 @@ exports.nextPrime = function(n) {
     });
 }
 
+exports.lowestFactor = function(n){
+   var prime = 1;
+   while (n % exports.getPrime(prime) !== 0) prime++;
+   return exports.getPrime(prime);
+};
+
 //tests if a number is prime
 exports.isPrime = function(n){
 	if (n < exports.primes[exports.primes.length-1])
