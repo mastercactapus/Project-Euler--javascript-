@@ -10,6 +10,13 @@ Numbers.prototype = {
     isTriangle: function(n) {
         return (Math.sqrt(1 + 8 * n) - 1) % 2 === 0;
     },
+    isPentagonal: function(n) {
+        if (n<1) return false;
+        return (Math.sqrt(1 + 24 * n) + 1) / 6 % 1 === 0;
+    },
+    nPentagonal: function(n) {
+        return n * (3 * n - 1) / 2;
+    },
     simplify: function(fraction) {
         var factA = exports.getFactors(fraction[0]);
         var factB = exports.getFactors(fraction[1]);
