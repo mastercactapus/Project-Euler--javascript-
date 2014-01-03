@@ -5,16 +5,14 @@ var optimus = require("./optimus");
 var prime = 1;
 var pNum = optimus.getPrime(prime);
 
-function factorial(n) {
-    return n === 1 ? 1 : factorial(n-1)*n;
-}
+
 function testPermutation(digits) {
     var num = +digits.join("");
     return optimus.isPrime(num) ? num : null;
 }
 function getLargest(digits) {
     var permutation = numbers.firstPermutation(digits.split(""));
-    var max = factorial(digits.length);
+    var max = numbers.factorial(digits.length);
     var largest = null;
 
     for (var i=0;i<max;i++){

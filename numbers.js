@@ -4,6 +4,9 @@ function Numbers() {
 
 var digitStack=[];
 Numbers.prototype = {
+    factorial: function(n) {
+        return n === 1 ? 1 : this.factorial(n-1)*n;
+    },
     isTriangle: function(n) {
         return (Math.sqrt(1 + 8 * n) - 1) % 2 === 0;
     },
