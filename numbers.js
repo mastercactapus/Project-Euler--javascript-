@@ -7,15 +7,29 @@ Numbers.prototype = {
     factorial: function(n) {
         return n === 1 ? 1 : this.factorial(n-1)*n;
     },
-    isTriangle: function(n) {
-        return (Math.sqrt(1 + 8 * n) - 1) % 2 === 0;
+    isTriangle: function(t) {
+        if (t<1) return 0;
+        var n = (Math.sqrt(1 + 8 * t) - 1) / 2;
+        return n % 1 === 0 ? n : 0;
     },
-    isPentagonal: function(n) {
-        if (n<1) return false;
-        return (Math.sqrt(1 + 24 * n) + 1) / 6 % 1 === 0;
+    isPentagonal: function(t) {
+        if (t<1) return 0;
+        var n = (Math.sqrt(1 + 24 * t) + 1) / 6;
+        return n % 1 === 0 ? n : 0;
+    },
+    isHexagonal: function(t) {
+        if (t<1) return 0;
+        var n = (Math.sqrt(1 + 8 * t) + 1) / 4;
+        return n % 1 === 0 ? n : 0;
+    },
+    nTriangle: function(n) {
+        return n * (3 * n - 1) / 2;
     },
     nPentagonal: function(n) {
         return n * (3 * n - 1) / 2;
+    },
+    nHexagonal: function(n) {
+        return n * (2 * n - 1);
     },
     simplify: function(fraction) {
         var factA = exports.getFactors(fraction[0]);
