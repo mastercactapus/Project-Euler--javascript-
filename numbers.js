@@ -4,6 +4,9 @@ function Numbers() {
 
 var digitStack=[];
 Numbers.prototype = {
+    isTriangle: function(n) {
+        return (Math.sqrt(1 + 8 * n) - 1) % 2 === 0;
+    },
     simplify: function(fraction) {
         var factA = exports.getFactors(fraction[0]);
         var factB = exports.getFactors(fraction[1]);
