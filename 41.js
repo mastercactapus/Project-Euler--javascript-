@@ -5,12 +5,29 @@ var optimus = require("./optimus");
 var prime = 1;
 var pNum = optimus.getPrime(prime);
 
-var largest=0;
+function factorial(n) {
+    return n === 1 ? 1 : factorial(n-1)*n;
+}
+function testPermutation(digits) {
+    var num = +digits.join("");
+    return optimus.isPrime(num) ? num : null;
+}
+function getLargest(digits) {
+    var permutation = numbers.firstPermutation(digits.split(""));
+    var max = factorial(digits.length);
+    var largest = null;
 
-while (pNum <= 999999) {
-   // if (numbers.isPandigital(pNum) && pNum > largest) largest=pNum;
-    prime++;
-    pNum=optimus.getPrime(prime);
+    for (var i=0;i<max;i++){
+        largest = testPermutation(permutation) || largest;
+        permutation = numbers.lexiPermutation(permutation);
+    }
+    return largest;
 }
 
-out.print(largest);
+var digits = "123456789";
+var winner = null;
+while (!winner) {
+    winner = getLargest(digits);
+    digits = digits.substr(0,digits.length-1);
+}
+out.print(winner);
