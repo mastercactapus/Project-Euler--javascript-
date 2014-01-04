@@ -1,230 +1,166 @@
-var BASE = 10; //base used in memory
 
-function add(num1,num2) {
-    var res = [];
-    var len = Math.max(num1.length,num2.length)+2;
-    num1=pad(num1,len);
-    num2=pad(num2,len);
-    res=pad(res,len);
-    var carry=0;
-    for (var i = 0;i<len;i++) {
-        var val = num1[i] + num2[i] + carry;
-        res[i] = (val % BASE);
-        carry = val / BASE >> 0;
-    }
-    return res;
-}
-function prod(num1,num2) {
-    var res=[];
-    var len = num1.length + num2.length +2;
-    num1=pad(num1,len);
-    num2=pad(num2,len);
-    res=pad(res,len);
-    var carry=0;
-    for (var i = 0;i<len;i++){
-        for (var j=0;j<len;j++){
-            var val = (num2[j] * num1[i]) + carry + res[i+j];
-            res[i+j] = (val % BASE);
-            carry = val / BASE >> 0;
-        }
-    }
-}
-function pad(num,len) {
-    if (num.length>=len) return num;
-    var padding = num[num.length-1]; //sign bit/chunk
-    while (num.length<len) num.push(padding);
-    return num;
-}
-function incr(num) {
-    num[0]++;
-    if (num[num.length-1] == BASE-1)num.push(0);
-    var i=0;
-    while (num[i] == BASE) {
-        num[i]=0;
-        num[i+1]++;
-        i++;
-    }
-}
-function compliment(num) {
-    var r = BASE-1;
-    for (var i=0;i<num.length;i++){
-        num[i] = r-num[i];
-    }
-    return incr(num);
-}
-function dif(num1,num2) {
-    var res = [];
-    var len = Math.max(num1.length,num2.length);
-    num1.length=len;
-    num2.length=len;
-    res.length=len;
-    return add(num1,compliment(num2)).pop();
-}
-
-
-var bigInt = function(set_data,set_base) {
-    var
-        base=10,
-        digits=[],
-        positive=true,
-        self=this;
-    function pad(minSize){ //pass a list of bigInts, set them all to the same padding
-        while (digits.length < minSize) digits.push(0);
-    }
-    function digit(num){
-        if (num>= digits.length) return 0;
-        return digits[num];
-    }
-    function eq(num) {
-        var i = Math.max(num.digits.length,digits.length);
-        for (i--;i>=0;i--){
-            if (digit(i)!=num.digit(i)) return false;
-        }
-        return false;
-    }
-    function gt(num){
-        var i = Math.max(num.digits.length,digits.length);
-        for (i--;i>=0;i--){
-            if (digit(i)>num.digit(i)) return true;
-            else if (digit(i)<num.digit(i)) return true;
-        }
-        return false;
-    }
-    function lt(num){
-        var i = Math.max(num.digits.length,digits.length);
-        for (i--;i>=0;i--){
-            if (digit(i)<num.digit(i)) return true;
-            else if (digit(i)>num.digit(i)) return true;
-        }
-        return false;
-    }
-
-    function lte(num){
-        return lt(num) || eq(num);
-    }
-    function gte(num){
-        return gt(num) || eq(num);
-    }
-    function abs() {
-        return new bigInt(digits, positive);
-    }
-    function add(num){
-        var tmp =[];
-        var len = Math.max(digits.length,num.digits.length)+1;
-
-        for (var i=0;i<len-1;i++) {
-            var sum = num.digit(i)/1 + digit(i)/1;
-            res.digits[i] = sum % base;
-            res.digits[i+1] = Math.floor(sum/base);
-        }
-        return res;
-    }
-    function sub(num) {
-        var res = new bigInt(0);
-        if (eq(num)) return res;
-        var len = Math.max(digits.length,num.digits.length);
-
-        var top,bot;
-        if (gt(num)) {
-            top = digit;
-            bot = num.digit;
+function BigInt(n, opts) {
+    opts = opts||{};
+    if (n instanceof BigInt) {
+        this.base = opts.base || n.base;
+        this.digits = n.digits.slice(0);
+    } else if (n instanceof Array) {
+        this.base = opts.base||10;
+        this.digits = n.slice(0);
+    } else { //string only supports base 10 for now
+        this.base = 10;
+        this.digits = n.toString().split("").reverse();
+        if (this.digits[this.digits.length-1] === "-") {
+            this.digits[this.digits.length-1] = 0;
+            this.digits = this._neg();
         } else {
-            res = res.invert();
-            top=num.digit;
-            bot=digit;
+            this.digits.push(0);
+        }
+        this.digits = this.digits.map(function(digit){
+            return +digit;
+        });
+    }
+
+    if (opts.pad) {
+        this._pad(opts.pad);
+    }
+}
+
+BigInt.prototype = {
+    add: function(n) {
+        n = new BigInt(n);
+
+        var len = Math.max(n.digits.length,this.digits.length) + 1;
+        var out = new BigInt(0, {pad:len,base:this.base});
+
+        for (var i=0;i<=len;i++){
+             out._add(i, this._get(i) + n._get(i));
         }
 
-        for (var i=0; i<len; i++){
-            res.digits[i] = top(i+1) - bot(i+1);
-            console.log()
-            if (res.digits[i]<0) {
-                res.digits[i]+=10;
-                res.digits[i+1]--;
+        return out;
+    },
+    sub: function(n) {
+        return this.add(new BigInt(n)._neg());
+    },
+    mul: function(n) {
+        n = new BigInt(n);
+
+        var len = n.digits.length + this.digits.length - 2;
+        var out = new BigInt(0, {pad:len,base:this.base});
+
+        for (var i_n=0,n_len=n.digits.length;i_n<=n_len;i_n++){
+            for (var i_this=0,this_len=this.digits.length;i_this<=this_len;i_this++){
+                out._add(i_n + i_this, this._get(i_this) * n._get(i_n));
             }
         }
-        return res;
-    }
-    function invert() {
-        return new bigInt(digits,!positive);
-    }
-
-    function trim() {
-        var tmp = digits.length;
-        for (var i=digits.length-1;i>0;i--){
-            if (digits[i]!==0) break;
+        return out;
+    },
+    _cmp: function(n,cmp) {
+        n = new BigInt(n);
+        
+        var len = Math.max(n.digits.length, this.digits.length);
+        if (this._get(len) === n._get(len)) {
+            
+            for (var i = len;i>0;i--) {
+                if (this._get(i) !== n._get(i)) return cmp(this._get(i), n._get(i));
+            }
+            return cmp(this._get(0), n._get(0));
+        } else {
+            return cmp(n._get(len), this._get(len));
         }
-        digits.length=i+1;
-    }
+    },
+    _lt: function(a,b) {
+        return a<b;
+    },
+    _gt: function(a,b) {
+        return a>b;
+    },
+    _lte: function(a,b) {
+        return a<=b;
+    },
+    _gte: function(a,b) {
+        return a>=b;
+    },
+    lt: function(n) {
+        return this._cmp(n, this._lt);  
+    },
+    gt: function(n) {
+        return this._cmp(n, this._gt);  
+    },
+    lte: function(n) {
+        return this._cmp(n, this._lte);  
+    },
+    gte: function(n) {
+        return this._cmp(n, this._gte);  
+    },
+    eq: function(n) {
+        n = new BigInt(n);
+        
+        var len = Math.max(n.digits.length, this.digits.length);
 
-    function init() {
-        if (typeof number.digits != "undefined") {
-            digits = number.digits;
-            positive = typeof isPositive != "undefined" ? isPositive : number.positive;
+        for (var i =0;i<len;i++) {
+            if (n._get(i) !== this._get(i)) return false;
         }
-        else if (typeof number.length != "undefined") {
-            digits = number;
-            positive = typeof isPositive != "undefined" ? isPositive : number.positive;
+        return true;
+    },
+    pow: function(n) {
+        n = new BigInt(n);
+        var inc = new BigInt(1);
+        
+        if (n.eq(0)) return inc;
+        
+        var out = new BigInt(this);
+        for (var c = new BigInt(1); c.lt(n); c=c.add(inc)) {
+            out = out.mul(this);
         }
-        else if (typeof number == 'number') {
-            var str = number.toString();
-            var decimal = str.indexOf(".");
-            if (decimal>-1) str = str.substr(0,decimal);
-            if (str[0]=="-") {
-                positive=false;
-                str=str.substr(1);
-            } else positive=true;
-            digits = str.split("").reverse();
+        
+        return out;
+    },
+    toString: function() {
+        if (this.digits[this.digits.length-1] === 9) {
+            return "-" + this._neg().slice(0).reverse().join("").replace(/^0+(.)/,"$1");
+        } else {
+            return this.digits.slice(0).reverse().join("").replace(/^0+(.)/,"$1");
         }
-    }
+    },
+    _get: function(i) {
+        return +((i < this.digits.length) ? this.digits[i] : this._last);
+    },
+    _set: function(idx,val){
+        var carry = val;
+        for (var i=idx;i<this.digits.length;i++) {
+            this.digits[i] = carry % this.base;
+            carry = Math.floor(carry/this.base) + this._get(i + 1);
+            if (carry === 0) break;
+        }
+        return this;
+    },
+    _add: function(idx,val){
+        return this._set(idx, this._get(idx) + (+val));
+    },
+    get _last() {
+        return this.digits[this.digits.length-1];
+    },
+    _pad: function(length) {
+        for (var i=0,len=length + 1 - this.digits.length;i<len;i++){
+            this.digits.push(this._last);
+        }
+    },
+    _neg: function() {
+        var carry = 1;
+        var neg = this.digits.map(function(digit){
+            var val = 9-digit+carry;
+            if (val === 10) {
+                val=0;
+                carry = 1;
+            } else {
+                carry = 0;
+            }
+            return val;
+        });
+        return neg;
 
-    function toString(){
-        trim();
-        return (positive ? "" : "-") + digits.reverse().join("");
     }
+};
 
-    function addVal(num) {
-        num = new bigInt(num);
-        if (num.positive != positive) {
-            return positive ? sub(num) : sub(num).invert();
-        } else
-            return positive ? add(num) : add(num).invert();
-    }
-    function subVal(num) {
-        num = new bigInt(num);
-        return addVal(num.invert());
-    }
-    function isGreater(num) {
-        num = new bigInt(num);
-        if (num.positive != positive)
-            return positive;
-        else return gt(num);
-    }
-    function isLess(num){
-        num = new bigInt(num);
-        if (num.positive != positive)
-            return !positive;
-        else return lt(num);
-    }
-    function isEqual(num){
-        num = new bigInt(num);
-
-    }
-
-    init();
-    return {
-      toString:toString,
-      add:addVal,
-      sub:subVal,
-      gt:isGreater,
-      lt:isLess,
-      eq:isEqual,
-      invert:invert,
-      digits:digits,
-      positive:positive,
-      digit:digit
-    };
-}
-
-var a = new bigInt(4);
-var b = new bigInt(50);
-console.log(a.sub(b).toString());
+module.exports = BigInt;
