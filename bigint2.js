@@ -1,15 +1,27 @@
 
-var base = 10;
+// var base = 10;
 
-function BigInt(n) {
+function BigInt(n,options) {
+    if (n instanceof BigInt) {
+        this._d = n._d.slice(0);
+        this.limit = n.limit;
+        this.negative = n.negative;
+        this.base = n.base;
+        return this;
+    }
+    options = options || {};
+    this.limit = options.limit||Infinity;
     this._d = [0];
+    this.base = options.base||10;
+    
     if (typeof n === "number") {
         this._fromNumber(n);
     } else if (typeof n === "string") {
         this._fromString(n);
-    } else if (n instanceof BigInt) {
-        this._d = n._d.slice(0);
-        this.negative = n.negative;
+    } else if (n instanceof Array) {
+        this._d = n.slice(0);
+    } else {
+        throw new TypeError("Invalid type, only BigInt, number, and string are supported.");
     }
 }
 BigInt.max = function(a,b) {
@@ -26,13 +38,13 @@ BigInt.min = function(a,b) {
 BigInt.prototype = {
     toString: function(){
         return (this.negative && !this.zero() ? "-" : "") +
-            this._baseConvert(this._d.slice(0,this.len), base, 10).reverse().join("");
+            this._baseConvert(this._d.slice(0,this.len), this.base, 10).reverse().join("");
     },
     toInteger: function() {
         var out = 0;
         var len =this.len;
         for (var i=0;i<len;i++){
-            out += Math.pow(base, i) * this._get(i);
+            out += Math.pow(this.base, i) * this._get(i);
         }
         
         return this.negative ? -out : out;
@@ -40,49 +52,105 @@ BigInt.prototype = {
     mul: function(n) {
         n = this.new(n);
         var out = new BigInt(0);
-        out.neg = this.neg !== n.neg;
+        out.negative = this.negative !== n.negative;
+        var nlen = n.len;
+        var tlen = this.len;
+        var d = [];
+        var i=nlen+tlen-2;
+        while (i>=0) {
+            d[i]=0;
+            i--;
+        }
         
-        for (var _n=0;_n<n.len;_n++) {
-            for (var _t=0;_t<this.len;_t++) {
-                out._put(_n+_t, n._get(_n) * this._get(_t));
+        for (var _n=0;_n<nlen;_n++) {
+            for (var _t=0;_t<tlen;_t++) {
+                d[_n+_t] += n._get(_n) * this._get(_t);
             }
+        }
+        
+        out._apply(d);
+        return out;
+    },
+    pow: function(n) {
+        n = new BigInt(n);
+        var out = new BigInt(1);
+        var zero = new BigInt(0);
+        
+        for (;!n.zero();n.dec()){
+            out = out.mul(this);
         }
         return out;
     },
-    
     add: function(n) {
         n = this.new(n);
-        return n.neg === this.neg ? this._add(n) : this._sub(n);
+        return n.negative === this.negative ? this._add(n) : this._sub(n);
     },
     sub: function(n) {
         n = this.new(n);
-        return n.neg === this.neg ? this._sub(n) : this._add(n);
+        return n.negative === this.negative ? this._sub(n) : this._add(n);
     },
     zero: function() {
-        return this.len === 1 && this._d[0] === 0;
+        return this._d[0] === 0 && this.len === 1;
     },
-    _add: function(n) {
-        var len = Math.max(this._d.length, n._d.length);
-        var out = new BigInt(this);
-        for (var i=0;i<=len;i++){
-            out._set(i, out._get(i) + n._get(i));
+    
+    div: function(n) {
+        n = new BigInt(n);
+        
+        var res = this._div(n);
+        res[0].negative = this.negative !== n.negative;
+        
+        return res[0];
+    },
+    mod: function(n) {
+        n = new BigInt(n);
+        
+        var res = this._div(n);
+        res[1].negative = this.negative !== n.negative;
+        
+        return res[1];
+    },
+    
+    _div: function(n) {
+        n = new BigInt(n);
+        var rem = new BigInt(this);
+        var val = new BigInt(0);
+        while (rem._gte(n)) {
+            rem = rem._sub(n);
+            val.inc();
         }
+        return [val,rem];
+    },
+    
+    _add: function(n) {
+        var len = Math.max(this.len, n.len);
+        var out = new BigInt(0);
+        out.negative = this.negative;
+        var d = [];
+        for (var i=0;i<=len;i++){
+            d[i] = this._get(i) + n._get(i)
+        }
+        out._apply(d);
         return out;
     },
     _sub: function(n) {
-        var len = Math.max(n._d.length, this._d.length);
+        var len = Math.max(n.len, this.len);
         var i;
-        var out = new BigInt(this);
-        if (out._lt(n)) {
-            out.negative = !out.negative;
+        var d = [];
+
+        var out = new BigInt(0);
+        out.negative = this.negative;
+        if (this._lt(n)) {
+            out.negative = !this.negative;
             for (i=0;i<len;i++){
-                out._set(i, n._get(i) - out._get(i));
+                d[i] = n._get(i) - this._get(i);
             }
-        } else {
+        } else if (this._gt(n)) {
             for (i=0;i<len;i++){
-                out._put(i, -n._get(i));
+                d[i] = this._get(i) - n._get(i);
             }
         }
+        
+        out._apply(d);
         return out;
     },
 
@@ -100,7 +168,7 @@ BigInt.prototype = {
         }
     },
     _lt: function(n) {
-        return this._cmp(n, function(a,b){
+        return this._cmp(n, function(a,b) {
             return a<b;
         });
     },
@@ -150,14 +218,19 @@ BigInt.prototype = {
         if (n.neg === this.neg) return this._eq(n);
         else return false;
     },
-    
+    inc: function() {
+        this._apply([1]);
+    },
+    dec: function() {
+        this._apply([-1]);
+    },
 
     new: function(n) {
-        return new BigInt(n);
+        return new BigInt(n, this.limit);
     },
     get len() {
         for (var i=this._d.length-1;i>=0;i--){
-            if (this._d[i] !== 0) return i+1;
+            if (this._d[i] > 0) return i+1;
         }
         return 1;
     },
@@ -178,36 +251,71 @@ BigInt.prototype = {
         this.negative = str[0] === "-" ? (str = substr(1), true) : false;
         this._d = this._baseConvert(str.split("").map(function(d){
             return +d;
-        }).reverse(), 10, base);
+        }).reverse(), 10, this.base);
     },
     _fromNumber: function(n) {
         this.negative = n < 0;
-        return this._set(0,Math.abs(n));
+        return this._apply([Math.abs(n)]);
     },
     _get: function(idx) {
-        return idx < this._d.length ? this._d[idx] : 0;
+        return +(idx < this._d.length ? this._d[idx] : 0);
     },
     _pad: function(idx) {
-       while (this._d.length <= idx) {
-           this._d.push(0);
-       }
+        if (idx < this.limit) {
+            while (this._d.length <= idx) {
+                this._d.push(0);
+            }
+        }
        return this;
     },
-    _set: function(idx, val) {
-        if (val === 0 && idx >= this._d.length) return this;
-        this._pad(idx);
-        this._d[idx] = val % base;
-        if (this._d[idx] < 0) {
-            this._d[idx] += base;
-            this._put(idx+1, -1);
+    _apply: function(array) {
+        var carry = 0;
+        for (var i=0,len=array.length;i<len;i++){
+            var val = array[i] + carry;
+            carry = this._set(i, val);
         }
-
-        return this._put(idx+1, val < 0 ? Math.ceil(val/base) : Math.floor(val/base));
-
+        while (carry > 0 || carry < 0) {
+            carry = this._set(i, carry);
+            i++;
+        }
+        return this;
     },
-    _put: function(idx, val) {
-        return this._set(idx, this._get(idx)+val);
+    _set: function(idx, val) {
+        var carry;
+        this._pad(idx);
+        this._d[idx] += val % this.base;
+        carry = (val < 0) ? Math.ceil(val/this.base) : Math.floor(val/this.base);
+        if (this._d[idx] < 0) {
+            this._d[idx] += this.base;
+            carry--;
+        }
+        return carry;
     }
 };
 
 module.exports = BigInt;
+
+function trace(obj) {
+    var keys = Object.keys(obj);
+    keys.forEach(function(key){
+        var desc = Object.getOwnPropertyDescriptor(obj, key);
+        // if (desc.get || desc.set) return;
+        if (typeof desc.value === "function") {
+            var fn = desc.value;
+            
+            desc.value = function(){
+                var args = [].slice.call(arguments,0);
+                console.log.apply(console, [this,key].concat(args));
+                return fn.apply(this, args);
+            };
+            
+            Object.defineProperty(obj, key, desc);
+        }
+    });
+}
+
+// trace(BigInt.prototype);
+
+
+
+
