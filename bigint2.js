@@ -6,7 +6,12 @@ function BigInt(n,options) {
         this._d = n._d.slice(0);
         this.limit = n.limit;
         this.negative = n.negative;
-        this.base = n.base;
+        this.base = options.base || n.base;
+        
+        if (this.base !== n.base) {
+            this._d = this._baseConvert(this._d, n.base, this.base);
+        }
+        
         return this;
     }
     options = options || {};
@@ -51,7 +56,7 @@ BigInt.prototype = {
     },
     mul: function(n) {
         n = this.new(n);
-        var out = new BigInt(0);
+        var out = this.new(0);
         out.negative = this.negative !== n.negative;
         var nlen = n.len;
         var tlen = this.len;
@@ -72,9 +77,9 @@ BigInt.prototype = {
         return out;
     },
     pow: function(n) {
-        n = new BigInt(n);
-        var out = new BigInt(1);
-        var zero = new BigInt(0);
+        n = this.new(n);
+        var out = this.new(1);
+        var zero = this.new(0);
         
         for (;!n.zero();n.dec()){
             out = out.mul(this);
@@ -94,7 +99,7 @@ BigInt.prototype = {
     },
     
     div: function(n) {
-        n = new BigInt(n);
+        n = this.new(n);
         
         var res = this._div(n);
         res[0].negative = this.negative !== n.negative;
@@ -102,7 +107,7 @@ BigInt.prototype = {
         return res[0];
     },
     mod: function(n) {
-        n = new BigInt(n);
+        n = this.new(n);
         
         var res = this._div(n);
         res[1].negative = this.negative !== n.negative;
@@ -111,9 +116,9 @@ BigInt.prototype = {
     },
     
     _div: function(n) {
-        n = new BigInt(n);
-        var rem = new BigInt(this);
-        var val = new BigInt(0);
+        n = this.new(n);
+        var rem = this.new(this);
+        var val = this.new(0);
         while (rem._gte(n)) {
             rem = rem._sub(n);
             val.inc();
@@ -123,7 +128,7 @@ BigInt.prototype = {
     
     _add: function(n) {
         var len = Math.max(this.len, n.len);
-        var out = new BigInt(0);
+        var out = this.new(0);
         out.negative = this.negative;
         var d = [];
         for (var i=0;i<=len;i++){
@@ -137,7 +142,7 @@ BigInt.prototype = {
         var i;
         var d = [];
 
-        var out = new BigInt(0);
+        var out = this.new(0);
         out.negative = this.negative;
         if (this._lt(n)) {
             out.negative = !this.negative;
@@ -226,7 +231,7 @@ BigInt.prototype = {
     },
 
     new: function(n) {
-        return new BigInt(n, this.limit);
+        return new BigInt(n, this);
     },
     get len() {
         for (var i=this._d.length-1;i>=0;i--){
@@ -241,10 +246,23 @@ BigInt.prototype = {
         this.negative = val;
     },
     _baseConvert: function(array, fromRadix, toRadix) {
-        if (fromRadix !== 10 || toRadix!==10)
-            throw new TypeError("baseConvert not implemented");
+        if (fromRadix === toRadix) return array;
+        var from = new BigInt(array, {base: fromRadix});
+        
+        var out = new BigInt(0,{base: toRadix});
+        
+        var res = from._div(toRadix);
+        var d = [];
+
+        for (var i=0;!res[0].zero();i++,res=res[0]._div(toRadix)) {
+            d[i] = res[1].toInteger();
+        }
+        
+        d[i] = res[1].toInteger();
+        
+        out._apply(d);
             
-        return array;
+        return out._d;
     },
     
     _fromString: function(str) {
